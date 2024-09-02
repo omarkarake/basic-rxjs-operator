@@ -19,14 +19,9 @@ export class AppComponent implements OnInit {
     this.intervalNumbers$ = interval(1000);
   }
 
-  ngOnInit(): void {
-    console.log('----------------------of operator----------------------');
-    this.numbers$.subscribe({
-      next: (value) => console.log('next: ', value),
-      error: (error) => console.log('error: ', error),
-      complete: () => console.log('the end emmition of value to: of operator'),
-    });
+  ngOnInit(): void {}
 
+  fromOperator() {
     console.log('----------------------from operator--------------------');
     this.colors$.subscribe({
       next: (value) => console.log('value: ', value),
@@ -34,7 +29,8 @@ export class AppComponent implements OnInit {
       complete: () =>
         console.log('the end of emmition values to: from operator'),
     });
-
+  }
+  intervalOperator() {
     console.log('----------------------interval operator---------------------');
     const takeFiveNumbers$ = this.intervalNumbers$.pipe(take(5));
     takeFiveNumbers$.subscribe({
@@ -46,14 +42,12 @@ export class AppComponent implements OnInit {
         ),
     });
   }
-
-  fromOperator() {
-    throw new Error('Method not implemented.');
-  }
-  intervalOperator() {
-    throw new Error('Method not implemented.');
-  }
   ofOperator() {
-    throw new Error('Method not implemented.');
+    console.log('----------------------of operator----------------------');
+    this.numbers$.subscribe({
+      next: (value) => console.log('next: ', value),
+      error: (error) => console.log('error: ', error),
+      complete: () => console.log('the end emmition of value to: of operator'),
+    });
   }
 }
