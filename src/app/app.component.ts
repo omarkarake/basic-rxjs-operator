@@ -1,12 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { concat, from, interval, Observable, of, take, throwError } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  concat,
+  from,
+  interval,
+  Observable,
+  of,
+  Subscription,
+  take,
+  throwError,
+} from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'exploring-basic-rxjs-operator';
   numbers$: Observable<number>;
   colors$: Observable<string>;
@@ -16,6 +25,7 @@ export class AppComponent implements OnInit {
   concatedNumbers$: Observable<number>;
   newArray: string[] = ['blue', 'yellow', 'green'];
   numbersWithError$: Observable<number>;
+  private parentSubscription: Subscription = new Subscription();
 
   constructor() {
     this.numbers$ = of(1, 2, 3, 4, 5);
@@ -34,19 +44,24 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  ngOnDestroy(): void {
+    this.parentSubscription.unsubscribe();
+  }
+
   fromOperator() {
     console.log('----------------------from operator--------------------');
-    this.colors$.subscribe({
+    const sub = this.colors$.subscribe({
       next: (value) => console.log('value: ', value),
       error: (error) => console.log('error: ', error),
       complete: () =>
         console.log('the end of emmition values to: from operator'),
     });
+    this.parentSubscription.add(sub);
   }
   intervalOperator() {
     console.log('----------------------interval operator---------------------');
     const takeFiveNumbers$ = this.intervalNumbers$.pipe(take(5));
-    takeFiveNumbers$.subscribe({
+    const sub = takeFiveNumbers$.subscribe({
       next: (value) => console.log('value: ', value),
       error: (error) => console.log('error: ', error),
       complete: () =>
@@ -54,19 +69,21 @@ export class AppComponent implements OnInit {
           'the interval that emmit 5 numbers using take is completed'
         ),
     });
+    this.parentSubscription.add(sub);
   }
   ofOperator() {
     console.log('----------------------of operator----------------------');
-    this.numbers$.subscribe({
+    const sub = this.numbers$.subscribe({
       next: (value) => console.log('next: ', value),
       error: (error) => console.log('error: ', error),
       complete: () => console.log('the end emmition of value to: of operator'),
     });
+    this.parentSubscription.add(sub);
   }
 
   concatOperator() {
     console.log('----------------------concat operator----------------------');
-    this.concatedNumbers$.subscribe({
+    const sub = this.concatedNumbers$.subscribe({
       next: (value) => console.log('value: ', value),
       error: (error) => console.log('error: ', error),
       complete: () =>
@@ -74,16 +91,18 @@ export class AppComponent implements OnInit {
           'the end of the concated map, first observable 1 to 5 and second observable is from 6 to 10'
         ),
     });
+    this.parentSubscription.add(sub);
   }
 
   errorOperator() {
     console.log(
       '-------------when erroring in emition of values ----------------'
     );
-    this.numbersWithError$.subscribe({
+    const sub = this.numbersWithError$.subscribe({
       next: (value) => console.log('value: ', value),
       error: (error) => console.error('error: ', error),
       complete: () => console.log('the emmition ended with error'),
     });
+    this.parentSubscription.add(sub);
   }
 }
