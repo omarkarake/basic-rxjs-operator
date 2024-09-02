@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { concat, from, interval, Observable, of, take } from 'rxjs';
+import { concat, from, interval, Observable, of, take, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
   numbersFrom6To10$: Observable<number>;
   concatedNumbers$: Observable<number>;
   newArray: string[] = ['blue', 'yellow', 'green'];
+  numbersWithError$: Observable<number>;
 
   constructor() {
     this.numbers$ = of(1, 2, 3, 4, 5);
@@ -22,6 +23,13 @@ export class AppComponent implements OnInit {
     this.numbersFrom6To10$ = from(this.newArrayNumbers);
     this.intervalNumbers$ = interval(1000);
     this.concatedNumbers$ = concat(of(1, 2, 3, 4, 5), from([6, 7, 8, 9, 10]));
+    this.numbersWithError$ = new Observable<number>((observer) => {
+      observer.next(1);
+      observer.next(2);
+      observer.error('An error occurred on number 3!');
+      observer.next(4);
+      observer.next(5);
+    });
   }
 
   ngOnInit(): void {}
@@ -57,6 +65,7 @@ export class AppComponent implements OnInit {
   }
 
   concatOperator() {
+    console.log('----------------------concat operator----------------------');
     this.concatedNumbers$.subscribe({
       next: (value) => console.log('value: ', value),
       error: (error) => console.log('error: ', error),
@@ -64,6 +73,17 @@ export class AppComponent implements OnInit {
         console.log(
           'the end of the concated map, first observable 1 to 5 and second observable is from 6 to 10'
         ),
+    });
+  }
+
+  errorOperator() {
+    console.log(
+      '-------------when erroring in emition of values ----------------'
+    );
+    this.numbersWithError$.subscribe({
+      next: (value) => console.log('value: ', value),
+      error: (error) => console.error('error: ', error),
+      complete: () => console.log('the emmition ended with error'),
     });
   }
 }
