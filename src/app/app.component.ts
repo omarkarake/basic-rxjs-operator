@@ -57,17 +57,22 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.searchForm = new FormGroup({
-      search: new FormControl('', [
-        Validators.required,
-        Validators.minLength(3),
-        SearchValidators.cannotContainSpace,
-      ]),
+    this.searchForm = this.fb.group({
+      search: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          SearchValidators.cannotContainSpace,
+        ],
+      ],
     });
   }
 
   ngAfterViewInit(): void {
-    this.search.valueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(console.log)
+    this.search.valueChanges
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe(console.log);
   }
 
   ngOnDestroy(): void {
