@@ -38,7 +38,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   numbersWithError$: Observable<number>;
   private parentSubscription: Subscription = new Subscription();
   searchForm!: FormGroup;
-  isLoading: boolean = true;
+  isLoading: boolean = false;
   searchResults: string[] = [];
 
   constructor(private fb: FormBuilder) {
