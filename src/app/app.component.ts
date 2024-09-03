@@ -15,6 +15,7 @@ import {
   take,
   throwError,
 } from 'rxjs';
+import { SearchValidators } from './validators/search.validators';
 
 @Component({
   selector: 'app-root',
@@ -58,6 +59,7 @@ export class AppComponent implements OnInit, OnDestroy {
       search: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
+        SearchValidators.cannotContainSpace
       ]),
     });
   }

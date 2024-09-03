@@ -245,6 +245,9 @@
             Enter at least
             {{search.errors?.['minlength']?.requiredLength}} character
           </div>
+          <div *ngIf="search?.errors?.['cannotContainSpace']">
+            Can not contain space...
+          </div>
         </div>
       </form>
     </div>
