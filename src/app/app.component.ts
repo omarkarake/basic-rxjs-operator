@@ -8,12 +8,14 @@ import {
 import {
   concat,
   debounceTime,
+  delay,
   distinctUntilChanged,
   from,
   interval,
   Observable,
   of,
   Subscription,
+  switchMap,
   take,
   throwError,
 } from 'rxjs';
@@ -37,6 +39,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   private parentSubscription: Subscription = new Subscription();
   searchForm!: FormGroup;
   isLoading: boolean = true;
+  searchResults: string[] = [];
 
   constructor(private fb: FormBuilder) {
     this.numbers$ = of(1, 2, 3, 4, 5);
@@ -74,10 +77,41 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  simulateApiCall(query: string) {
+    // Simulate API response with delay
+    const data = [
+      'Apple',
+      'Banana',
+      'Cherry',
+      'Date',
+      'Fig',
+      'Grape',
+      'Kiwi',
+      'Lemon',
+      'Mango',
+      'Nectarine',
+      'Orange',
+      'Papaya',
+      'Quince',
+    ];
+
+    const filteredData = data.filter((item) =>
+      item.toLowerCase().includes(query.toLowerCase())
+    );
+
+    return of(filteredData).pipe(delay(1000)); // Simulates network delay
+  }
+
   ngAfterViewInit(): void {
     this.search.valueChanges
-      .pipe(debounceTime(400), distinctUntilChanged())
-      .subscribe(console.log);
+      .pipe(
+        debounceTime(400), // wait for the user to stop typing for 400ms
+        distinctUntilChanged(), // only trigger if the current value is different than the last
+        switchMap((searchTerm) => this.simulateApiCall(searchTerm)) // switch to a new observable on each input change
+      )
+      .subscribe((results) => {
+        this.searchResults = results;
+      });
   }
 
   ngOnDestroy(): void {

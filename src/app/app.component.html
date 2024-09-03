@@ -33,7 +33,9 @@
       <!-- Your main content -->
       <div *ngIf="!isLoading">
         <!-- Content here -->
-        <p>you na mean?..................</p>
+        <ul>
+          <li *ngFor="let result of searchResults">{{ result }}</li>
+        </ul>
       </div>
     </div>
   </div>
