@@ -36,6 +36,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   numbersWithError$: Observable<number>;
   private parentSubscription: Subscription = new Subscription();
   searchForm!: FormGroup;
+  isLoading: boolean = true;
 
   constructor(private fb: FormBuilder) {
     this.numbers$ = of(1, 2, 3, 4, 5);
@@ -50,6 +51,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       observer.next(4);
       observer.next(5);
     });
+    // Simulate loading delay
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 3000);
   }
 
   get search(): FormControl {
