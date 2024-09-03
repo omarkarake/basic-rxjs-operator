@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -7,6 +7,8 @@ import {
 } from '@angular/forms';
 import {
   concat,
+  debounceTime,
+  distinctUntilChanged,
   from,
   interval,
   Observable,
@@ -22,7 +24,7 @@ import { SearchValidators } from './validators/search.validators';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   title = 'exploring-basic-rxjs-operator';
   numbers$: Observable<number>;
   colors$: Observable<string>;
@@ -59,9 +61,13 @@ export class AppComponent implements OnInit, OnDestroy {
       search: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
-        SearchValidators.cannotContainSpace
+        SearchValidators.cannotContainSpace,
       ]),
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.search.valueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(console.log)
   }
 
   ngOnDestroy(): void {
