@@ -6,12 +6,14 @@ import {
   Validators,
 } from '@angular/forms';
 import {
+  combineLatest,
   concat,
   debounceTime,
   delay,
   distinctUntilChanged,
   from,
   interval,
+  map,
   Observable,
   of,
   Subscription,
@@ -40,6 +42,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   searchForm!: FormGroup;
   isLoading: boolean = false;
   searchResults: string[] = [];
+  combinedData$!: Observable<{ userDetails: any; userPosts: any[] }>;
 
   constructor(private fb: FormBuilder) {
     this.numbers$ = of(1, 2, 3, 4, 5);
@@ -74,6 +77,34 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           SearchValidators.cannotContainSpace,
         ],
       ],
+    });
+    this.combineLatestExample();
+  }
+
+  combineLatestExample(): void {
+    // Simulate API call for user details
+    const userDetails$ = of({
+      userId: 1,
+      username: 'john_doe',
+      email: 'john@example.com',
+    }).pipe(delay(2000)); // Simulates a 2-second delay
+
+    // Simulate API call for user posts
+    const userPosts$ = of([
+      { postId: 1, content: 'Post 1' },
+      { postId: 2, content: 'Post 2' },
+      { postId: 3, content: 'Post 3' },
+    ]).pipe(delay(5000)); // Simulates a 5-second delay
+
+    // Use combineLatest to combine the latest emissions from both observables
+    this.combinedData$ = combineLatest([userDetails$, userPosts$]).pipe(
+      map(([userDetails, userPosts]) => ({
+        userDetails,
+        userPosts,
+      }))
+    );
+    this.combinedData$.subscribe((data) => {
+      console.log('combineLatest example:', data);
     });
   }
 
