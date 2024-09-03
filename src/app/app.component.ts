@@ -107,9 +107,15 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(
         debounceTime(400), // wait for the user to stop typing for 400ms
         distinctUntilChanged(), // only trigger if the current value is different than the last
-        switchMap((searchTerm) => this.simulateApiCall(searchTerm)) // switch to a new observable on each input change
+        switchMap((searchTerm) => {
+          this.isLoading = true; // Show loading indicator
+          return this.simulateApiCall(searchTerm).pipe(
+            delay(0) // Ensure the observable emits only after the loading state is set
+          );
+        })
       )
       .subscribe((results) => {
+        this.isLoading = false; // Hide loading indicator
         this.searchResults = results;
       });
   }
