@@ -1,5 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import {
   concat,
   from,
   interval,
@@ -26,8 +32,9 @@ export class AppComponent implements OnInit, OnDestroy {
   newArray: string[] = ['blue', 'yellow', 'green'];
   numbersWithError$: Observable<number>;
   private parentSubscription: Subscription = new Subscription();
+  searchForm!: FormGroup;
 
-  constructor() {
+  constructor(private fb: FormBuilder) {
     this.numbers$ = of(1, 2, 3, 4, 5);
     this.colors$ = from(this.newArray);
     this.numbersFrom6To10$ = from(this.newArrayNumbers);
@@ -42,7 +49,18 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {}
+  get search(): FormControl {
+    return this.searchForm.get('search') as FormControl;
+  }
+
+  ngOnInit(): void {
+    this.searchForm = new FormGroup({
+      search: new FormControl('', [
+        Validators.required,
+        Validators.minLength(3),
+      ]),
+    });
+  }
 
   ngOnDestroy(): void {
     this.parentSubscription.unsubscribe();
