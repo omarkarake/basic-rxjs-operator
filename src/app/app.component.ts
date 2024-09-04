@@ -1,9 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -29,6 +24,7 @@ import {
   throwError,
 } from 'rxjs';
 import { SearchValidators } from './validators/search.validators';
+import { SimulateErrorUsersService } from './services/simulate-error-users.service';
 
 export interface UserDetails {
   userId: number;
@@ -71,8 +67,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   combinedData$!: Observable<CombinedData>;
   datas!: UserPost[];
   errorMessage: string = '';
+  users: UserDetails[] | null = null;
+  errorMessagesFromUsersService: string | null = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private userService: SimulateErrorUsersService
+  ) {
     this.numbers$ = of(1, 2, 3, 4, 5);
     this.colors$ = from(this.newArray);
     this.numbersFrom6To10$ = from(this.newArrayNumbers);
@@ -96,6 +97,16 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.userService.getUsers().subscribe(
+      (data: UserDetails[]) => {
+        this.users = data;
+        this.errorMessagesFromUsersService = null; // Clear error message on success
+      },
+      (error) => {
+        this.users = null;
+        this.errorMessagesFromUsersService = error.message; // Set the error message
+      }
+    );
     this.searchForm = this.fb.group({
       search: [
         '',
