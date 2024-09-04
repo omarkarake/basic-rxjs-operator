@@ -61,6 +61,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   searchForm!: FormGroup;
   isLoading: boolean = false;
   searchResults!: UserPost[];
+  userResults: UserDetails[] = [];
   combinedData$!: Observable<CombinedData>;
   datas!: UserPost[];
 
@@ -133,7 +134,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'The Art of Minimalism',
         content:
           'Understanding how minimalism can change your life and bring more clarity.',
-        image: 'https://www.graygroupintl.com/hubfs/Gray%20Group%20International/GGI%20-%20Assign%20and%20Sort%20%28WebP%29/Minimalist%20Art%20The%20Art%20of%20Subtracting.webp',
+        image:
+          'https://www.graygroupintl.com/hubfs/Gray%20Group%20International/GGI%20-%20Assign%20and%20Sort%20%28WebP%29/Minimalist%20Art%20The%20Art%20of%20Subtracting.webp',
       },
       {
         postId: 3,
@@ -147,7 +149,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'Tech Innovations 2024',
         content:
           'A look at the most groundbreaking tech advancements expected in 2024.',
-        image: 'https://imageio.forbes.com/specials-images/imageserve/64feb1e9622d5f528e73b638/0x0.jpg?format=jpg&height=900&width=1600&fit=bounds',
+        image:
+          'https://imageio.forbes.com/specials-images/imageserve/64feb1e9622d5f528e73b638/0x0.jpg?format=jpg&height=900&width=1600&fit=bounds',
       },
       {
         postId: 5,
@@ -232,7 +235,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         this.datas = data.userPosts;
         this.searchResults = this.datas;
-        console.log('datas: ', this.datas);
+        this.userResults.push(data.userDetails);
+        console.log('userResults: ', this.userResults);
       },
       error: (error) => {
         this.isLoading = false;
