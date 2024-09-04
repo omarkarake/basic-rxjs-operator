@@ -62,6 +62,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   private parentSubscription: Subscription = new Subscription();
   searchForm!: FormGroup;
   isLoading: boolean = false;
+  isLoadingOnButton: boolean = false;
   searchResults!: UserPost[];
   userResults: UserDetails[] = [];
   combinedData$!: Observable<CombinedData>;
@@ -97,16 +98,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.userService.getUsers().subscribe(
-      (data: UserDetails[]) => {
-        this.users = data;
-        this.errorMessagesFromUsersService = null; // Clear error message on success
-      },
-      (error) => {
-        this.users = null;
-        this.errorMessagesFromUsersService = error.message; // Set the error message
-      }
-    );
     this.searchForm = this.fb.group({
       search: [
         '',
@@ -118,6 +109,22 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       ],
     });
     this.combineLatestExample();
+  }
+
+  triggerNewRequest() {
+    this.isLoadingOnButton = true;
+    this.userService.getUsers().subscribe(
+      (data: UserDetails[]) => {
+        this.users = data;
+        this.errorMessagesFromUsersService = null; // Clear error message on success
+        this.isLoadingOnButton = false;
+      },
+      (error) => {
+        this.users = null;
+        this.errorMessagesFromUsersService = error.message; // Set the error message
+        this.isLoadingOnButton = false;
+      }
+    );
   }
 
   combineLatestExample(): void {
