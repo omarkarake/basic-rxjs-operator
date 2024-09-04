@@ -1,4 +1,9 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -12,6 +17,7 @@ import {
   debounceTime,
   delay,
   distinctUntilChanged,
+  filter,
   from,
   interval,
   map,
@@ -64,6 +70,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   userResults: UserDetails[] = [];
   combinedData$!: Observable<CombinedData>;
   datas!: UserPost[];
+  errorMessage: string = '';
 
   constructor(private fb: FormBuilder) {
     this.numbers$ = of(1, 2, 3, 4, 5);
@@ -95,7 +102,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         [
           Validators.required,
           Validators.minLength(3),
-          SearchValidators.cannotContainSpace,
+          // SearchValidators.cannotContainSpace,
         ],
       ],
     });
@@ -199,9 +206,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     ]).pipe(
       delay(3000),
       // Uncomment the next line to simulate an error in user posts API
-      switchMap(() => throwError('Failed to fetch user posts')),
+      // switchMap(() => throwError('Failed to fetch user posts')),
       catchError((error) => {
-        console.error('Error in userPosts$', error);
+        // console.error('Error in userPosts$', error);
         return of([
           { postId: 0, content: 'Posts could not be loaded.' } as UserPost,
         ]);
@@ -220,7 +227,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         return { userDetails, userPosts };
       }),
       catchError((error) => {
-        console.error('Error in combinedData$', error);
+        // console.error('Error in combinedData$', error);
         return of({
           error: 'An unexpected error occurred. Please try again later.',
         });
@@ -235,16 +242,20 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       next: (data) => {
         if ('error' in data) {
           console.error('Error in combinedData$', data.error);
+          this.errorMessage += data.error;
+          console.log('error message: ', this.errorMessage);
           return;
         }
         this.datas = data.userPosts;
         this.searchResults = this.datas;
         this.userResults.push(data.userDetails);
-        console.log('userResults: ', this.userResults);
+        // console.log('userResults: ', this.userResults);
       },
       error: (error) => {
         this.isLoading = false;
         console.error('Error in combinedData$', error);
+        this.errorMessage += error;
+        console.log('error message: ', this.errorMessage);
       },
       complete: () => {
         console.log('Combined data stream completed.');
@@ -254,23 +265,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
 
   simulateApiCall(query: string) {
     // Simulate API response with delay
-    const data = [
-      'Apple',
-      'Banana',
-      'Cherry',
-      'Date',
-      'Fig',
-      'Grape',
-      'Kiwi',
-      'Lemon',
-      'Mango',
-      'Nectarine',
-      'Orange',
-      'Papaya',
-      'Quince',
-    ];
-
-    // console.log('datas after typing: ', this.datas[0].title);
 
     const filteredData = this.datas.filter((item) =>
       item.title.toLowerCase().includes(query.toLowerCase())
@@ -284,6 +278,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(
         debounceTime(400), // wait for the user to stop typing for 400ms
         distinctUntilChanged(), // only trigger if the current value is different than the last
+        filter(() => this.search.valid || this.search.value.length === 0), // only proceed if the search is valid
         switchMap((searchTerm) => {
           this.isLoading = true; // Show loading indicator
           return this.simulateApiCall(searchTerm).pipe(
