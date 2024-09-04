@@ -19,13 +19,6 @@ export class SimulateErrorUsersService {
             { id: 1, username: 'johndoe', email: 'johndoe@example.com' },
             { id: 2, username: 'janedoe', email: 'janedoe@example.com' },
             { id: 3, username: 'mikesmith', email: 'mike.smith@example.com' },
-            {
-              id: 4,
-              username: 'sarahconnor',
-              email: 'sarah.connor@example.com',
-            },
-            { id: 5, username: 'brucewayne', email: 'bruce.wayne@example.com' },
-            { id: 6, username: 'clarkkent', email: 'clark.kent@example.com' },
           ];
           return of(users);
         } else {
@@ -37,7 +30,7 @@ export class SimulateErrorUsersService {
         error: (error) => console.log('Error occurred:', error.message), // Log error
       }),
       retry({
-        count: 3, // Retry up to 3 times
+        count: 1, // Retry up to 3 times
         delay: (retryCount) => {
           console.log(`Retry attempt #${retryCount}`); // Log each retry attempt
           return of(null).pipe(delay(1000)); // Add delay between retries

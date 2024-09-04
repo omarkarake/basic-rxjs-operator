@@ -2,25 +2,41 @@
   <!-- First Section (75% width on large screens) -->
   <div class="w-full lg:w-[75%] p-4">
     <div class="left-side relative">
-      <h1 class="text-blue-500 text-xl">User Details</h1>
-      <div *ngIf="users && users.length > 0; else noUsers">
-        <div
-          *ngFor="let user of users"
-          class="bg-white shadow-md rounded-lg p-4 mb-4"
-        >
-          <p class="text-lg font-semibold text-gray-800">{{ user.username }}</p>
-          <p class="text-sm text-gray-600">{{ user.email }}</p>
+      <div>
+        <h1 class="text-blue-500 text-xl">User Details</h1>
+        <div *ngIf="userResults && userResults.length > 0">
+          <div
+            *ngFor="let user of userResults"
+            class="bg-white shadow-md rounded-lg p-4 mb-4"
+          >
+            <p class="text-lg font-semibold text-gray-800">
+              {{ user.username }}
+            </p>
+            <p class="text-sm text-gray-600">{{ user.email }}</p>
+          </div>
         </div>
+        <h1 class="text-blue-500 text-xl">Users</h1>
+        <div *ngIf="users && users.length > 0; else noUsers">
+          <div
+            *ngFor="let user of users"
+            class="bg-white shadow-md rounded-lg p-4 mb-4"
+          >
+            <p class="text-lg font-semibold text-gray-800">
+              {{ user.username }}
+            </p>
+            <p class="text-sm text-gray-600">{{ user.email }}</p>
+          </div>
+        </div>
+        <!-- Fallback for when there are no users or an error occurred -->
+        <ng-template #noUsers>
+          <div *ngIf="errorMessagesFromUsersService" class="text-red-500">
+            <p>{{ errorMessagesFromUsersService }}</p>
+          </div>
+          <div *ngIf="!errorMessagesFromUsersService" class="text-gray-500">
+            <p>No user data available.</p>
+          </div>
+        </ng-template>
       </div>
-      <!-- Fallback for when there are no users or an error occurred -->
-      <ng-template #noUsers>
-        <div *ngIf="errorMessagesFromUsersService" class="text-red-500">
-          <p>{{ errorMessagesFromUsersService }}</p>
-        </div>
-        <div *ngIf="!errorMessagesFromUsersService" class="text-gray-500">
-          <p>No user data available.</p>
-        </div>
-      </ng-template>
       <p class="text-green-500 text-xl">User posts</p>
       <form [formGroup]="searchForm">
         <input
