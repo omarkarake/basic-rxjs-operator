@@ -112,6 +112,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       email: 'john@example.com',
     }).pipe(
       delay(2000),
+      // Uncomment the next line to simulate an error in user details API
+      // switchMap(() => throwError('Failed to fetch user details')),
       catchError((error) => {
         console.error('Error in userDetails$', error);
         return of({
@@ -196,6 +198,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       },
     ]).pipe(
       delay(3000),
+      // Uncomment the next line to simulate an error in user posts API
+      switchMap(() => throwError('Failed to fetch user posts')),
       catchError((error) => {
         console.error('Error in userPosts$', error);
         return of([
