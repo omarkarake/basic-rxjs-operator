@@ -60,7 +60,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   private parentSubscription: Subscription = new Subscription();
   searchForm!: FormGroup;
   isLoading: boolean = false;
-  searchResults: string[] = [];
+  searchResults!: UserPost[];
   combinedData$!: Observable<CombinedData>;
   datas!: UserPost[];
 
@@ -231,6 +231,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           return;
         }
         this.datas = data.userPosts;
+        this.searchResults = this.datas;
         console.log('datas: ', this.datas);
       },
       error: (error) => {
@@ -261,8 +262,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       'Quince',
     ];
 
-    const filteredData = data.filter((item) =>
-      item.toLowerCase().includes(query.toLowerCase())
+    // console.log('datas after typing: ', this.datas[0].title);
+
+    const filteredData = this.datas.filter((item) =>
+      item.title.toLowerCase().includes(query.toLowerCase())
     );
 
     return of(filteredData).pipe(delay(1000)); // Simulates network delay
