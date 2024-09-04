@@ -30,7 +30,7 @@ export class SimulateErrorUsersService {
         error: (error) => console.log('Error occurred:', error.message), // Log error
       }),
       retry({
-        count: 1, // Retry up to 3 times
+        count: 1, // Retry up to 1 times
         delay: (retryCount) => {
           console.log(`Retry attempt #${retryCount}`); // Log each retry attempt
           return of(null).pipe(delay(1000)); // Add delay between retries
