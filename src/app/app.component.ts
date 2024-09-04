@@ -24,10 +24,22 @@ import {
 } from 'rxjs';
 import { SearchValidators } from './validators/search.validators';
 
+export interface UserDetails {
+  userId: number;
+  username: string;
+  email: string;
+  error?: string; // Optional field to handle errors in user details
+}
 
-// Define a type that can be either the successful data or an error
-type CombinedData = 
-  | { userDetails: any; userPosts: any[] } 
+export interface UserPost {
+  postId: number;
+  title: string;
+  content: string;
+  image: string;
+}
+
+export type CombinedData =
+  | { userDetails: UserDetails; userPosts: UserPost[] }
   | { error: string };
 
 @Component({
@@ -50,6 +62,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   isLoading: boolean = false;
   searchResults: string[] = [];
   combinedData$!: Observable<CombinedData>;
+  datas!: UserPost[];
 
   constructor(private fb: FormBuilder) {
     this.numbers$ = of(1, 2, 3, 4, 5);
@@ -89,48 +102,125 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   combineLatestExample(): void {
+    this.isLoading = true;
+
     // Simulate API call for user details with potential error
-    const userDetails$ = of({
+    const userDetails$: Observable<UserDetails> = of({
       userId: 1,
       username: 'john_doe',
       email: 'john@example.com',
     }).pipe(
-      delay(2000), // Simulates a 2-second delay
-      // Uncomment to simulate an error
-      // switchMap(() => throwError(() => new Error('Failed to fetch user details'))),
+      delay(2000),
       catchError((error) => {
         console.error('Error in userDetails$', error);
-        return of({ error: 'User details could not be loaded.' });
+        return of({
+          error: 'User details could not be loaded.',
+        } as UserDetails);
       })
     );
 
     // Simulate API call for user posts with potential error
-    const userPosts$ = of([
-      { postId: 1, content: 'Post 1' },
-      { postId: 2, content: 'Post 2' },
-      { postId: 3, content: 'Post 3' },
+    const userPosts$: Observable<UserPost[]> = of([
+      {
+        postId: 1,
+        title: 'Exploring the Mountains',
+        content:
+          'A thrilling adventure through the rocky mountains, capturing the essence of nature.',
+        image: 'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0',
+      },
+      {
+        postId: 2,
+        title: 'The Art of Minimalism',
+        content:
+          'Understanding how minimalism can change your life and bring more clarity.',
+        image: 'https://images.unsplash.com/photo-1515165562835-cf75920307a0',
+      },
+      {
+        postId: 3,
+        title: 'Culinary Wonders',
+        content:
+          'Exploring the world’s best dishes and the stories behind them.',
+        image: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445',
+      },
+      {
+        postId: 4,
+        title: 'Tech Innovations 2024',
+        content:
+          'A look at the most groundbreaking tech advancements expected in 2024.',
+        image: 'https://images.unsplash.com/photo-1518779578993-ec3579fee39e',
+      },
+      {
+        postId: 5,
+        title: 'Urban Jungle',
+        content:
+          'How cities are transforming into green paradises with urban farming.',
+        image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac',
+      },
+      {
+        postId: 6,
+        title: 'The Future of AI',
+        content:
+          'Exploring how artificial intelligence is reshaping industries and our lives.',
+        image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d',
+      },
+      {
+        postId: 7,
+        title: 'Traveling on a Budget',
+        content:
+          'Top tips and destinations for those looking to explore the world without breaking the bank.',
+        image: 'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0',
+      },
+      {
+        postId: 8,
+        title: 'Sustainable Fashion',
+        content:
+          'How the fashion industry is embracing sustainability and what it means for consumers.',
+        image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c',
+      },
+      {
+        postId: 9,
+        title: 'Mindfulness and Meditation',
+        content:
+          'The benefits of mindfulness practices and how to incorporate them into your daily routine.',
+        image: 'https://images.unsplash.com/photo-1514996937319-344454492b37',
+      },
+      {
+        postId: 10,
+        title: 'The Gig Economy',
+        content:
+          'Understanding the rise of the gig economy and its impact on the workforce.',
+        image: 'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d',
+      },
     ]).pipe(
-      delay(5000), // Simulates a 5-second delay
-      // Uncomment to simulate an error
-      // switchMap(() => throwError(() => new Error('Failed to fetch user posts'))),
+      delay(3000),
       catchError((error) => {
         console.error('Error in userPosts$', error);
-        return of([{ postId: 0, content: 'Posts could not be loaded.' }]);
+        return of([
+          { postId: 0, content: 'Posts could not be loaded.' } as UserPost,
+        ]);
       })
     );
 
     // Use combineLatest to combine the latest emissions from both observables
     this.combinedData$ = combineLatest([userDetails$, userPosts$]).pipe(
       map(([userDetails, userPosts]) => {
-        // Handle the case where an error occurred in one of the streams
         if ('error' in userDetails || userPosts[0].postId === 0) {
-          return { error: 'Data could not be fully loaded. Please try again later.' };
+          return {
+            error: 'Data could not be fully loaded. Please try again later.',
+          };
         }
+        this.isLoading = false;
         return { userDetails, userPosts };
       }),
       catchError((error) => {
         console.error('Error in combinedData$', error);
-        return of({ error: 'An unexpected error occurred. Please try again later.' });
+        return of({
+          error: 'An unexpected error occurred. Please try again later.',
+        });
+      }),
+      map((result) => {
+        this.isLoading = false;
+        return result;
       })
     );
 
@@ -140,10 +230,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           console.error('Error in combinedData$', data.error);
           return;
         }
-        console.log('User details:', data.userDetails);
-        console.log('User posts:', data.userPosts);
+        this.datas = data.userPosts;
+        console.log('datas: ', this.datas);
       },
       error: (error) => {
+        this.isLoading = false;
         console.error('Error in combinedData$', error);
       },
       complete: () => {
