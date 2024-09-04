@@ -133,7 +133,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'The Art of Minimalism',
         content:
           'Understanding how minimalism can change your life and bring more clarity.',
-        image: 'https://images.unsplash.com/photo-1515165562835-cf75920307a0',
+        image: 'https://www.graygroupintl.com/hubfs/Gray%20Group%20International/GGI%20-%20Assign%20and%20Sort%20%28WebP%29/Minimalist%20Art%20The%20Art%20of%20Subtracting.webp',
       },
       {
         postId: 3,
@@ -147,7 +147,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'Tech Innovations 2024',
         content:
           'A look at the most groundbreaking tech advancements expected in 2024.',
-        image: 'https://images.unsplash.com/photo-1518779578993-ec3579fee39e',
+        image: 'https://imageio.forbes.com/specials-images/imageserve/64feb1e9622d5f528e73b638/0x0.jpg?format=jpg&height=900&width=1600&fit=bounds',
       },
       {
         postId: 5,
