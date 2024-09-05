@@ -5,6 +5,7 @@ import { delay, switchMap, retry, catchError, tap } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root',
 })
+// service created to simulate an error in the HTTP request
 export class SimulateErrorUsersService {
   constructor() {}
 

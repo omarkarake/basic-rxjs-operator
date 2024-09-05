@@ -15,6 +15,7 @@
             <p class="text-sm text-gray-600">{{ user.email }}</p>
           </div>
         </div>
+        <!-- button to trigger request for Users data -->
         <div
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer inline-block"
           (click)="triggerNewRequest()"
@@ -22,6 +23,7 @@
           trigger New Request
         </div>
         <h1 class="text-blue-500 text-xl">Users</h1>
+        <!-- getting the user from service http with error handling -->
         <div *ngIf="users && users.length > 0; else noUsers">
           <div
             *ngFor="let user of users"
@@ -33,6 +35,7 @@
             <p class="text-sm text-gray-600">{{ user.email }}</p>
           </div>
         </div>
+        <!-- when user occured -->
         <!-- Fallback for when there are no users or an error occurred -->
         <ng-template #noUsers>
           <div *ngIf="errorMessagesFromUsersService" class="text-red-500">
@@ -62,6 +65,7 @@
           </div> -->
         </div>
       </form>
+      <!-- adding loading when fetching data -->
       <div class="h-[300px] absolute top-3 left-[280px] lg:left-[300px]">
         <app-loading-spinner *ngIf="isLoading || isLoadingOnButton"></app-loading-spinner>
       </div>
